@@ -1,19 +1,29 @@
 // require('dotenv').config({path: './.env' })
 // this is done so that our application gets the early access of env variable
 
-// but this is the modern syntax
+// but this is not the modern syntax
 
 
 import dotenv from "dotenv"
 import connectDB from "./db/index.js";
+
 dotenv.config({
     path: './.env'
 })
 
 
-
+const PORT = process.env.PORT || 8000;
 
 connectDB()
+.then(() =>{
+    app.listen(PORT , () =>{
+        console.log(`server is runnig at port ${PORT}`);
+    })
+})
+.catch((err) =>{
+    console.log("MongoDB connection failed", err);
+    
+})
 
 
 
