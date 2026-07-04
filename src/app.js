@@ -28,4 +28,19 @@ app.use(express.static("public"));
 
 app.use(cookieParser());
 
+
+// routes
+
+import userRouter from './routes/user.routes.js'
+
+// routes declaration
+app.use("/api/v1/users", userRouter)
+
+// the url will look like this:
+// https://localhost:8000/api/v1/users/register
+// https://localhost:8000/users/login
+
+// we do not need to declare the routes again 
+
+
 export { app };
