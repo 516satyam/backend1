@@ -3,37 +3,21 @@
 
 // but this is not the modern syntax
 
+import "./env.js";
 import { app } from "./app.js";
-import dotenv from "dotenv"
 import connectDB from "./db/index.js";
-
-dotenv.config({
-    path: './.env'
-})
-
 
 const PORT = process.env.PORT || 8000;
 
 connectDB()
-.then(() =>{
-    app.listen(PORT , () =>{
-        console.log(`server is runnig at port ${PORT}`);
-    })
-})
-.catch((err) =>{
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`server is runnig at port ${PORT}`);
+    });
+  })
+  .catch((err) => {
     console.log("MongoDB connection failed", err);
-    
-})
-
-
-
-
-
-
-
-
-
-
+  });
 
 /*
 import mongoose from "mongoose";
