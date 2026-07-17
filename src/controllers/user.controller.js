@@ -8,6 +8,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
     const user = await User.findById(userId);
+    
     const accessToken = user.generateAccessToken();
     const refreshToken = user.generateRefreshToken();
 
@@ -17,6 +18,8 @@ const generateAccessAndRefreshTokens = async (userId) => {
 
     return { accessToken, refreshToken };
   } catch (error) {
+    console.error("actual error: ", error);
+    
     throw new ApiError(
       500,
       "something went wrong while generating refresh and access token"
@@ -111,7 +114,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
   const { username, email, password } = req.body;
 
-  if (!username || !email) {
+  if (!username && !email) {
     throw new ApiError(400, "username or email is required");
   }
 
@@ -147,37 +150,41 @@ const loginUser = asyncHandler(async (req, res) => {
     .cookie("accessToken", accessToken, options)
     .cookie("refreshToken", refreshToken, options)
     .json(
-      new ApiResponse(200, {
-        user: loggedInUser,
-        accessToken,
-        refreshToken
-      },"user logged In successfully")
+      new ApiResponse(
+        200,
+        {
+          user: loggedInUser,
+          accessToken,
+          refreshToken,
+        },
+        "user logged In successfully"
+      )
     );
 });
 
-const logoutUser = asyncHandler(async(req, res) => {
-  await User.findByIdAndUpdate
-  (req.user._id,
+const logoutUser = asyncHandler(async (req, res) => {
+  await User.findByIdAndUpdate(
+    req.user._id,
     {
-    $set: {
-      refreshToken: undefined
-    }},
+      $set: {
+        refreshToken: undefined,
+      },
+    },
     {
-      new: true
+      new: true,
     }
-  )
+  );
 
   const options = {
     httpOnly: true,
     secure: true,
-  }
+  };
 
-  return res.
-  status(200)
-  .clearCookie("accessToken", options) 
-  .clearCookie("refreshToken", options) 
-  .json(new ApiResponse(200, {}, "User logged out"))
-
-})
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, {}, "User logged out"));
+});
 
 export { registerUser, loginUser, logoutUser };
